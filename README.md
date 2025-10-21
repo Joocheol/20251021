@@ -47,5 +47,6 @@
 - 루트 디렉터리의 `index.html`을 브라우저에서 열면 자산 통계, 효율적 프런티어 산점도, 샘플 포트폴리오 비중을 한눈에 볼 수 있는 대시보드를 확인할 수 있습니다.【F:index.html†L1-L107】
 - 대시보드는 `efficient_frontier.py`가 생성하는 `efficient_frontier_data.json`과 `efficient_frontier.svg`를 활용해 캔버스 기반 인터랙티브 차트와 SVG 원본 이미지를 동시에 제공합니다.【F:index.html†L58-L83】【F:assets/app.js†L1-L170】
 - 데이터 갱신이 필요하면 `python efficient_frontier.py`를 다시 실행해 JSON과 SVG를 최신화한 후 페이지를 새로 고침하세요.【F:index.html†L93-L101】
+- 로컬에서 간단한 웹 서버를 띄우고 싶다면 `python server.py`를 실행한 뒤 출력된 주소(`http://127.0.0.1:8000/` 등)에 접속하면 됩니다.【F:server.py†L1-L63】
 
 ![효율적 프런티어 산점도](efficient_frontier.svg)
