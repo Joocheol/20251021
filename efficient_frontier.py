@@ -1,5 +1,6 @@
 """Compute efficient frontier for assets in temp.csv without external dependencies."""
 import csv
+import json
 import math
 from dataclasses import dataclass
 from datetime import datetime
@@ -8,6 +9,7 @@ from typing import Dict, List, Sequence, Tuple
 
 DATA_FILE = Path("temp.csv")
 OUTPUT_SVG = Path("efficient_frontier.svg")
+OUTPUT_JSON = Path("efficient_frontier_data.json")
 
 
 def load_close_prices(path: Path) -> Tuple[List[str], List[Dict[str, float]], List[datetime]]:
@@ -275,6 +277,7 @@ def main() -> None:
     print(f"Price observations used: {len(rows)} sessions ({first_date} to {last_date})")
     print(f"Daily return vectors: {len(returns)}")
 
+    asset_stats: List[Dict[str, float]] = []
     print("\nAsset statistics (daily and annualised):")
     for idx, (ticker, mu) in enumerate(zip(tickers, means)):
         daily_vol = math.sqrt(max(cov[idx][idx], 0.0))
@@ -283,6 +286,15 @@ def main() -> None:
         print(
             f"  - {ticker}: μ={format_percentage(mu)} per day ({format_percentage(ann_return)} annualised), "
             f"σ={format_percentage(daily_vol)} per day ({format_percentage(ann_vol)} annualised)"
+        )
+        asset_stats.append(
+            {
+                "ticker": ticker,
+                "expected_return_daily": mu,
+                "expected_return_annual": ann_return,
+                "volatility_daily": daily_vol,
+                "volatility_annual": ann_vol,
+            }
         )
 
     if frontier:
@@ -305,6 +317,46 @@ def main() -> None:
                 f"  - σ={format_percentage(point.risk)} ({format_percentage(ann_vol)} annualised), "
                 f"μ={format_percentage(point.expected_return)} ({format_percentage(ann_return)} annualised); {weights_info}"
             )
+
+    payload = {
+        "meta": {
+            "date_start": first_date,
+            "date_end": last_date,
+            "sessions": len(rows),
+            "return_vectors": len(returns),
+            "svg_path": str(OUTPUT_SVG),
+        },
+        "tickers": tickers,
+        "asset_statistics": asset_stats,
+        "points": [
+            {"risk": point.risk, "expected_return": point.expected_return}
+            for point in points
+        ],
+        "frontier": [
+            {
+                "weights": {ticker: weight for ticker, weight in zip(tickers, point.weights)},
+                "expected_return": point.expected_return,
+                "expected_return_annual": annualize_return(point.expected_return),
+                "risk": point.risk,
+                "risk_annual": annualize_volatility(point.risk),
+            }
+            for point in frontier
+        ],
+    }
+
+    if frontier:
+        payload["frontier_samples"] = [
+            {
+                "weights": {ticker: weight for ticker, weight in zip(tickers, point.weights)},
+                "expected_return": point.expected_return,
+                "expected_return_annual": annualize_return(point.expected_return),
+                "risk": point.risk,
+                "risk_annual": annualize_volatility(point.risk),
+            }
+            for point in unique_points
+        ]
+
+    OUTPUT_JSON.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
 if __name__ == "__main__":

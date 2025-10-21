@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>효율적 프런티어 대시보드</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="container">
+        <h1>삼성전자 · 애플 · 엔비디아 효율적 프런티어</h1>
+        <p>
+          2023년 10월부터 2025년 10월까지의 종가 데이터를 기반으로 세 자산의
+          위험-수익 조합을 분석했습니다. 아래 대시보드에서 요약 지표, 효율적
+          프런티어 곡선, 샘플 포트폴리오 구성을 확인할 수 있습니다.
+        </p>
+        <div class="meta-grid" id="meta-summary">
+          <div>
+            <span class="meta-label">관측 기간</span>
+            <span class="meta-value" id="meta-dates">-</span>
+          </div>
+          <div>
+            <span class="meta-label">거래일 수</span>
+            <span class="meta-value" id="meta-sessions">-</span>
+          </div>
+          <div>
+            <span class="meta-label">수익률 벡터</span>
+            <span class="meta-value" id="meta-returns">-</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section>
+        <h2>자산 요약 통계</h2>
+        <p>
+          일간 기대수익률과 변동성을 연율화 값과 함께 정리했습니다. 변동성은
+          일간 수익률의 표준편차를 의미합니다.
+        </p>
+        <div class="table-wrapper">
+          <table id="asset-table">
+            <thead>
+              <tr>
+                <th>티커</th>
+                <th>일간 기대수익률</th>
+                <th>일간 변동성</th>
+                <th>연율화 기대수익률</th>
+                <th>연율화 변동성</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>효율적 프런티어 시각화</h2>
+        <p>
+          회색 점은 가능한 모든 포트폴리오 조합을 의미하며, 붉은 선은 동일한
+          위험 수준에서 가장 높은 기대수익률을 제공하는 효율적 프런티어입니다.
+        </p>
+        <div class="chart-wrapper">
+          <canvas id="frontier-canvas" width="860" height="560" aria-label="효율적 프런티어 차트"></canvas>
+        </div>
+        <figure class="svg-fallback">
+          <figcaption>Python 스크립트에서 생성한 SVG 차트</figcaption>
+          <img src="efficient_frontier.svg" alt="효율적 프런티어 SVG" />
+        </figure>
+      </section>
+
+      <section>
+        <h2>샘플 포트폴리오 조합</h2>
+        <p>
+          최소 변동성, 중간 지점, 최대 기대수익률 포트폴리오의 구성과 위험·수익
+          지표를 비교해 보세요.
+        </p>
+        <div class="table-wrapper">
+          <table id="frontier-table">
+            <thead>
+              <tr>
+                <th>분류</th>
+                <th>연율화 기대수익률</th>
+                <th>연율화 변동성</th>
+                <th>포트폴리오 비중</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>재생성 방법</h2>
+        <p>
+          데이터와 시각화는 저장소 루트의 <code>efficient_frontier.py</code>
+          스크립트로부터 생성됩니다. 최신 결과를 반영하려면 아래 명령을 실행한
+          뒤 브라우저를 새로 고침하세요.
+        </p>
+        <pre><code>python efficient_frontier.py</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>
+          데이터 출처: temp.csv · 최근 업데이트: <span id="meta-updated">-</span>
+        </p>
+      </div>
+    </footer>
+    <script src="assets/app.js" defer></script>
+  </body>
+</html>
